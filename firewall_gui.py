@@ -4,9 +4,6 @@ import random
 import time
 from dataclasses import dataclass
 
-# ===========================
-# 1. DATA & LOGIC LAYER
-# ===========================
 
 @dataclass
 class Packet:
