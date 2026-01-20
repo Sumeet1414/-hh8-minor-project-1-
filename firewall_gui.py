@@ -46,9 +46,9 @@ class FirewallEngine:
         self.stats[decision] += 1
         return decision, reason
 
-# ===========================
+
 # 2. GUI LAYER
-# ===========================
+
 
 class FirewallApp:
     def __init__(self, root):
