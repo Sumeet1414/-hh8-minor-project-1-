@@ -4,9 +4,6 @@ import random
 import time
 import threading
 
-# ==========================================
-# 1. BACKEND LOGIC (The Brains)
-# ==========================================
 
 class Packet:
     def __init__(self, pkt_id, src_ip, dst_ip, port, protocol, payload):
@@ -20,9 +17,9 @@ class Packet:
 class FirewallEngine:
     def __init__(self):
         self.rules = []
-        # Default Rules
-        self.add_rule("DENY", port=22)  # Block SSH
-        self.add_rule("DENY", ip="10.0.0.5") # Block known hacker IP
+        
+        self.add_rule("DENY", port=22)  
+        self.add_rule("DENY", ip="10.0.0.5") 
 
     def add_rule(self, action, port=None, ip=None):
         self.rules.append({"action": action, "port": port, "ip": ip})
@@ -31,14 +28,14 @@ class FirewallEngine:
         reason = "Default Policy"
         decision = "ALLOW"
 
-        # 1. Check ACL Rules
+        
         for rule in self.rules:
             if rule["port"] is not None and packet.port == rule["port"]:
                 return "DENY", f"Port {rule['port']} Blocked"
             if rule["ip"] is not None and packet.src_ip == rule["ip"]:
                 return "DENY", f"IP {rule['ip']} Blacklisted"
 
-        # 2. Advanced ML Payload Analysis (Simulated)
+        
         if len(packet.payload) > 80:
             return "DENY", "ML: Buffer Overflow Detected"
         if "SQL" in packet.payload:
@@ -46,9 +43,7 @@ class FirewallEngine:
 
         return "ALLOW", "Traffic Normal"
 
-# ==========================================
-# 2. FRONTEND GUI (The Face)
-# ==========================================
+
 
 class FirewallDashboard:
     def __init__(self, root):
@@ -56,8 +51,7 @@ class FirewallDashboard:
 
         self.root.title("🛡️ Firewall Simulator")
         self.root.geometry("900x600")
-        self.root.configure(bg="#1e1e1e") # Dark Mode Background
-
+        self.root.configure(bg="#1e1e1e") 
         self.engine = FirewallEngine()
         self.is_running = False
         self.packet_count = 0
@@ -66,12 +60,12 @@ class FirewallDashboard:
         self.setup_ui()
 
     def setup_ui(self):
-        # --- HEADER ---
+        
         header = tk.Label(self.root, text="NETWORK TRAFFIC SENTINEL", 
                          font=("Consolas", 20, "bold"), bg="#1e1e1e", fg="#00ff00")
         header.pack(pady=10)
 
-        # --- STATS PANEL ---
+        
         stats_frame = tk.Frame(self.root, bg="#2d2d2d", pady=10)
         stats_frame.pack(fill="x", padx=20)
 
@@ -81,11 +75,11 @@ class FirewallDashboard:
         self.lbl_denied = tk.Label(stats_frame, text="BLOCKED: 0", font=("Arial", 14, "bold"), bg="#2d2d2d", fg="#ff5252")
         self.lbl_denied.pack(side="right", padx=40)
 
-        # --- MAIN CONTENT AREA ---
+        
         content_frame = tk.Frame(self.root, bg="#1e1e1e")
         content_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-        # Left: Controls
+        
         control_frame = tk.LabelFrame(content_frame, text="Controls & Rules", bg="#1e1e1e", fg="white", font=("Arial", 10))
         control_frame.pack(side="left", fill="y", padx=5)
 
@@ -104,17 +98,15 @@ class FirewallDashboard:
         btn_add_rule = tk.Button(control_frame, text="+ Block Port", command=self.add_port_rule)
         btn_add_rule.pack(pady=5)
 
-        # Right: Live Logs
         log_frame = tk.LabelFrame(content_frame, text="Live Packet Inspection Log", bg="#1e1e1e", fg="white")
         log_frame.pack(side="right", fill="both", expand=True, padx=5)
 
         self.log_area = scrolledtext.ScrolledText(log_frame, bg="#000000", fg="#00ff00", font=("Consolas", 10))
         self.log_area.pack(fill="both", expand=True, padx=5, pady=5)
-        
-        # Configure Log Colors
-        self.log_area.tag_config("ALLOW", foreground="#00ff00") # Green
-        self.log_area.tag_config("DENY", foreground="#ff3333")  # Red
-        self.log_area.tag_config("INFO", foreground="#00ffff")  # Cyan
+
+        self.log_area.tag_config("ALLOW", foreground="#00ff00") 
+        self.log_area.tag_config("DENY", foreground="#ff3333")  
+        self.log_area.tag_config("INFO", foreground="#00ffff")  
 
     def add_port_rule(self):
         try:
@@ -122,11 +114,11 @@ class FirewallDashboard:
             self.engine.add_rule("DENY", port=port)
             self.log_message(f"[SYSTEM] Added Rule: DENY Port {port}", "INFO")
         except ValueError:
-            pass # Ignore invalid inputs
+            pass
 
     def log_message(self, message, tag):
         self.log_area.insert(tk.END, message + "\n", tag)
-        self.log_area.see(tk.END) # Auto-scroll to bottom
+        self.log_area.see(tk.END) 
 
     def start_simulation(self):
         self.is_running = True
@@ -134,7 +126,7 @@ class FirewallDashboard:
         self.btn_stop.config(state="normal")
         self.log_message("--- SIMULATION STARTED ---", "INFO")
         
-        # Run traffic generator in a separate background thread
+
         threading.Thread(target=self.generate_traffic, daemon=True).start()
 
     def stop_simulation(self):
@@ -162,20 +154,18 @@ class FirewallDashboard:
 
             decision, reason = self.engine.analyze_packet(pkt)
             
-            # Update GUI Stats
+            
             self.stats[decision] += 1
             self.lbl_allowed.config(text=f"ALLOWED: {self.stats['ALLOW']}")
             self.lbl_denied.config(text=f"BLOCKED: {self.stats['DENY']}")
 
-            # Log Result
+            
             log_text = f"[{decision}] {pkt.src_ip}:{pkt.port} -> {reason}"
             self.log_message(log_text, decision)
 
-            time.sleep(1.5) # Speed of traffic (adjust this to make it faster/slower)
+            time.sleep(1.5) 
 
-# ==========================================
-# 3. RUN THE APP
-# ==========================================
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = FirewallDashboard(root)

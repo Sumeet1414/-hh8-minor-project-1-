@@ -13,5 +13,4 @@ class Packet:
     payload: str
     
     def __repr__(self):
-        # This makes the print output look readable
         return f"[Packet #{self.id}] {self.src_ip}:{self.port} -> {self.dst_ip} ({self.protocol})"

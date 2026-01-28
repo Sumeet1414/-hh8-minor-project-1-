@@ -3,23 +3,19 @@ from packet import Packet
 from firewall import Firewall, FirewallRule
 
 def main():
-    # 1. Initialize Firewall
     fw = Firewall()
 
-    # 2. Add Rules (The Logic)
     print("Loading Rules...")
-    fw.add_rule(FirewallRule("DENY", port=22))         # Block SSH
-    fw.add_rule(FirewallRule("DENY", blocked_ip="10.0.0.5")) # Block specific Hacker IP
+    fw.add_rule(FirewallRule("DENY", port=22))         
+    fw.add_rule(FirewallRule("DENY", blocked_ip="10.0.0.5")) 
     
-    # 3. Create Packets (The Traffic)
     traffic = [
         Packet(1, "192.168.1.1", "8.8.8.8", 443, "TCP", "Secure HTTPS Request"),
-        Packet(2, "10.0.0.5", "8.8.8.8", 80, "TCP", "Malicious Request from Hacker"), # Should Block (IP)
-        Packet(3, "192.168.1.50", "1.1.1.1", 22, "TCP", "Attempting SSH connection"), # Should Block (Port)
-        Packet(4, "192.168.1.99", "8.8.8.8", 80, "TCP", "A" * 100), # Should Block (ML/Payload too large)
+        Packet(2, "10.0.0.5", "8.8.8.8", 80, "TCP", "Malicious Request from Hacker"), 
+        Packet(3, "192.168.1.50", "1.1.1.1", 22, "TCP", "Attempting SSH connection"), 
+        Packet(4, "192.168.1.99", "8.8.8.8", 80, "TCP", "A" * 100), 
     ]
 
-    # 4. Run the Simulator
     print("\n--- STARTING TRAFFIC SIMULATION ---\n")
     
     allowed_count = 0
@@ -35,9 +31,8 @@ def main():
             print(f"RESULT: ❌ DENIED\n")
             denied_count += 1
             
-        time.sleep(1) # Pause for effect
+        time.sleep(1) 
 
-    # 5. Dashboard Summary
     print("-" * 30)
     print(f"Total Traffic: {len(traffic)}")
     print(f"Allowed: {allowed_count}")
